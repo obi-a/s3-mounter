@@ -4,6 +4,7 @@ metadata:
   labels:
     app: s3-provider
   name: s3-provider
+  namespace: decodeinvesting
 spec:
   template:
     metadata:
@@ -12,12 +13,15 @@ spec:
     spec:
       containers:
       - name: s3fuse
-        image: dockerhub.io/meain/s3-mounter
+        image: meain/s3-mounter:latest
         securityContext:
           privileged: true
-        envFrom:
-        - configMapRef:
-            name: s3-config
+        env:
+        - name: S3_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: s3fs-bucket
         volumeMounts:
         - name: devfuse
           mountPath: /dev/fuse
